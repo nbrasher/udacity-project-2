@@ -12,6 +12,10 @@ class LinkedListNode:
         self.value = value
         self.next = None
 
+        # Add attributes to track access order
+        self.before = None
+        self.after = None
+
 
 class LRU_Cache:
 
@@ -20,6 +24,10 @@ class LRU_Cache:
         self.array = [None for _ in range(capacity)]
         self.capacity = capacity
         self.num_entries = 0
+
+        # Head and tail of access order list
+        self.most_recent = None
+        self.least_recent = None
 
 
     def get(self, key):
@@ -95,9 +103,16 @@ if __name__ == '__main__':
     our_cache.set(3, 3)
     our_cache.set(4, 4)
 
+    # Access order tracking for insertion
+    assert our_cache.most_recent.value == 4, 'Incorrect tracking of most_recent for insertion'
 
+    # Expected behavior when returning existing keys
     assert our_cache.get(1) == 1, 'Failed to return (1)'
-    assert our_cache.get(2) == 2, 'Failed to return (1)'
+    assert our_cache.most_recent.value == 1, 'Incorrect tracking of most_recent for access'
+    assert our_cache.get(2) == 2, 'Failed to return (2)'
+    assert our_cache.least_recent.value == 3, 'Incorrect tracking of least_recent'
+
+    # Expected behavior for unset keys
     assert our_cache.get(9) == -1, 'Failed to return -1 for missing value'
 
     # Fill cache so that LRU falls out
