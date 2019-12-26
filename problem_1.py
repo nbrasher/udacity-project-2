@@ -2,9 +2,9 @@
 Show me the data structures
 Problem 1: LRU cache
 '''
-from collections import deque
 
 
+# Node that also tracks access order
 class LinkedListNode:
     
     def __init__(self, key, value):
@@ -20,7 +20,6 @@ class LinkedListNode:
 class LRU_Cache:
 
     def __init__(self, capacity: int = 5):
-        # Initialize class variables
         self.array = [None for _ in range(capacity)]
         self.capacity = capacity
         self.num_entries = 0
@@ -33,6 +32,11 @@ class LRU_Cache:
     def get(self, key):
         # Return value if present, -1 if no node returned
         try:
+            node = self.get_node(key)
+
+            # Update tracking of which node was accessed
+            self.update_access_order(node)
+
             return self.get_node(key).value
         except:
             return -1
@@ -48,16 +52,24 @@ class LRU_Cache:
         while head is not None:
             if head.key == key:
                 head.value = value
+                self.update_access_order(new_node)
                 return
             head = head.next
 
+        # If a new value needs to be inserted, first check capacity
+        if self.num_entries == self.capacity:
+            self.delete_last(self.least_recent.key)
+
+        # Insert new node
         head = self.array[bucket_index]
         new_node.next = head
         self.array[bucket_index] = new_node
+        self.update_access_order(new_node)
         self.num_entries += 1
 
 
-    def delete(self, key):
+    # Delete the least recently accessed node
+    def delete_last(self, key):
         bucket_index = self.get_bucket_index(key)
         head = self.array[bucket_index]
 
@@ -68,11 +80,39 @@ class LRU_Cache:
                     self.array[bucket_index] = head.next
                 else:
                     previous.next = head.next
+
+                # Update num_entries and least_recent attributes
                 self.num_entries -= 1
+                self.least_recent = head.before
                 return
             else:
                 previous = head
                 head = head.next
+
+
+    # Update tracking of most recently accessed node
+    def update_access_order(self, node):
+        current_most_recent = self.most_recent
+
+        # If insertion order is empty, set new node to most and least recent
+        # Otherwise set node to head of access order list
+        if self.most_recent is None:
+            self.most_recent = node
+            self.least_recent = node
+        else:
+            # If node is already in list, re-link list
+            if node.before is not None:
+                node.before.after = node.after
+
+                # If node is least_recent, update
+                if self.least_recent is node:
+                    self.least_recent = node.before
+
+            # Set node to the head of access order 
+            node.before = None
+            node.after = current_most_recent
+            current_most_recent.before = node
+            self.most_recent = node
 
 
     def get_node(self, key):
@@ -103,20 +143,22 @@ if __name__ == '__main__':
     our_cache.set(3, 3)
     our_cache.set(4, 4)
 
-    # Access order tracking for insertion
+    # Test access order tracking for insertion
     assert our_cache.most_recent.value == 4, 'Incorrect tracking of most_recent for insertion'
 
-    # Expected behavior when returning existing keys
+    # Test behavior when returning existing keys
     assert our_cache.get(1) == 1, 'Failed to return (1)'
     assert our_cache.most_recent.value == 1, 'Incorrect tracking of most_recent for access'
     assert our_cache.get(2) == 2, 'Failed to return (2)'
     assert our_cache.least_recent.value == 3, 'Incorrect tracking of least_recent'
 
-    # Expected behavior for unset keys
+    # Test behavior for unset keys
     assert our_cache.get(9) == -1, 'Failed to return -1 for missing value'
 
     # Fill cache so that LRU falls out
     our_cache.set(5, 5) 
     our_cache.set(6, 6)
 
+    # Test expected beahvior for least recent value
     assert our_cache.get(3) == -1, 'Failed to return -1 for removed value'
+    print('All tests passed')
