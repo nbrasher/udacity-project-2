@@ -20,30 +20,19 @@ class LRU_Cache:
         self.array = [None for _ in range(capacity)]
         self.capacity = capacity
         self.num_entries = 0
-        self.access = deque()
 
 
     def get(self, key):
-        # Retrieve item from provided key. Return -1 if nonexistent.
-        self.access.append(key)
-        bucket_index = self.get_bucket_index(key)
-        head = self.array[bucket_index]
-
-        # Traverse dict to find key
-        while head is not None:
-            if head.key == key:
-                return head.value
-            head = head.next
-        
-        # If key not found
-        return -1
+        # Return value if present, -1 if no node returned
+        try:
+            return self.get_node(key).value
+        except:
+            return -1
 
 
     def set(self, key, value):
-        # Set the value if the key is not present in the cache. If the cache is at capacity remove the oldest item. 
-        self.access.append(key)
         bucket_index = self.get_bucket_index(key)
-
+        
         new_node = LinkedListNode(key, value)
         head = self.array[bucket_index]
 
@@ -53,12 +42,6 @@ class LRU_Cache:
                 head.value = value
                 return
             head = head.next
-
-        # key not found in the chain --> create a new entry and place it at the head of the chain
-        # If cache is full, delete least recently used
-        if self.num_entries == self.capacity:
-            lru_key = self.access.pop()
-            self.delete(lru_key)
 
         head = self.array[bucket_index]
         new_node.next = head
@@ -84,6 +67,20 @@ class LRU_Cache:
                 head = head.next
 
 
+    def get_node(self, key):
+        bucket_index = self.get_bucket_index(key)
+        head = self.array[bucket_index]
+
+        # Traverse dict to find key
+        while head is not None:
+            if head.key == key:
+                return head
+            head = head.next
+        
+        # If key not found
+        return None
+
+    
     def get_bucket_index(self, key):
         # Simplest possible hash function for integers
         return key % self.capacity
