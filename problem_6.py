@@ -24,7 +24,6 @@ class LinkedList:
             cur_head = cur_head.next
         return out_string
 
-
     def append(self, value):
 
         if self.head is None:
@@ -50,6 +49,7 @@ class LinkedList:
 def union(llist_1, llist_2):
     union = list()
     
+    # Loop through each list in sequence to get unique values
     node = llist_1.head
     while node:
         if node.value not in union:
@@ -67,22 +67,20 @@ def union(llist_1, llist_2):
 
 
 def intersection(llist_1, llist_2):
-    set1 = set()
-    set2 = set()
+    intersection = list()
+    
+    # Loop through both lists to compare values
+    node1 = llist_1.head
+    while node1:
+        node2 = llist_2.head
+        while node2:
+            if node1.value == node2.value:
+                if node1.value not in intersection:
+                    intersection.append(node1.value)
+                break
+            node2 = node2.next
+        node1 = node1.next
 
-    node = llist_1.head
-    while node:
-        if node.value not in set1:
-            set1.add(node.value)
-        node = node.next
-
-    node = llist_2.head
-    while node:
-        if node.value not in set2:
-            set2.add(node.value)
-        node = node.next
-
-    intersection = list(set1.intersection(set2))
     intersection.sort()
     return intersection
 
