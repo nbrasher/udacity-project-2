@@ -46,13 +46,45 @@ class LinkedList:
 
         return size
 
+
 def union(llist_1, llist_2):
-    # Your Solution Here
-    pass
+    union = list()
+    
+    node = llist_1.head
+    while node:
+        if node.value not in union:
+            union.append(node.value)
+        node = node.next
+
+    node = llist_2.head
+    while node:
+        if node.value not in union:
+            union.append(node.value)
+        node = node.next
+    
+    union.sort()
+    return union
+
 
 def intersection(llist_1, llist_2):
-    # Your Solution Here
-    pass
+    set1 = set()
+    set2 = set()
+
+    node = llist_1.head
+    while node:
+        if node.value not in set1:
+            set1.add(node.value)
+        node = node.next
+
+    node = llist_2.head
+    while node:
+        if node.value not in set2:
+            set2.add(node.value)
+        node = node.next
+
+    intersection = list(set1.intersection(set2))
+    intersection.sort()
+    return intersection
 
 
 if __name__ == '__main__':
@@ -71,8 +103,8 @@ if __name__ == '__main__':
 
     print(union(linked_list_1,linked_list_2))
     print(intersection(linked_list_1,linked_list_2))
-    assert union(linked_list_1,linked_list_2) == [4, 6, 21]
-    assert intersection(linked_list_1,linked_list_2) == [1, 2, 3, 4, 6, 9, 11, 21, 32, 35, 65]
+    assert union(linked_list_1,linked_list_2) == [1, 2, 3, 4, 6, 9, 11, 21, 32, 35, 65]
+    assert intersection(linked_list_1,linked_list_2) == [4, 6, 21]
 
     # Build test case 2
     linked_list_3 = LinkedList()
@@ -89,7 +121,7 @@ if __name__ == '__main__':
 
     print (union(linked_list_3,linked_list_4))
     print (intersection(linked_list_3,linked_list_4))
-    assert union(linked_list_1,linked_list_2) == []
-    assert intersection(linked_list_1,linked_list_2) == [1, 2, 3, 4, 6, 7, 8, 9, 11, 21, 23, 35, 65]
+    assert union(linked_list_3,linked_list_4) == [1, 2, 3, 4, 6, 7, 8, 9, 11, 21, 23, 35, 65]
+    assert intersection(linked_list_3, linked_list_4) == []
 
     print('All tests passed!')
