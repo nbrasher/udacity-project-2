@@ -6,6 +6,39 @@ from collections import defaultdict
 import sys
 
 
+# Binary Tree node with additional frequency attribute
+class Node(object): 
+    def __init__(self, 
+                 value = None,
+                 frequency: int = 0):
+        self.value = value
+        self.frequency = frequency
+        self.left = None
+        self.right = None
+
+
+# Binary Tree
+class Tree():
+    def __init__(self, 
+                 value = None,
+                 frequency: int = 0):
+        self.root = Node(value=value, frequency=frequency)
+    
+    # Define comparison operator for trees
+    def __lt__(self, tree2):
+        return self.root.frequency < tree2.root.frequency
+
+    # Huffman combination for trees
+    def combine(self, tree2):
+        old_root = self.root
+        new_root = Node(frequency=(old_root.frequency + \
+                                   tree2.root.frequency))
+        new_root.left = old_root
+        new_root.right = tree2.root
+        self.root = new_root
+
+
+# Custom class for Huffman encoding
 class Huffman():
     def __init__(self):
         self.queue = list()
@@ -15,19 +48,33 @@ class Huffman():
 
     def encode(self, data):
         # Lower-case input string and build queue
-        self._build_queue(data.lower())
+        data=data.lower()
+        self._build_queue(data)
 
         # Build Huffman tree and get encoding values
-        self._built_tree()
-        self._get_codes()
+        self._build_tree()
+        self._get_codes(self.tree.root, '')
 
-        # TODO: Encode data string
-        return ''
+        # Encode data string
+        return ''.join([self.codes[c] for c in data])
 
 
     def decode(self, data):
-        # TODO: Decode data string
-        return ''
+        # Huffman decoding
+        decode = ''
+        i=0
+        while i < len(data):
+            # Start at root, traverse tree until value found
+            node = self.tree.root
+            while node.left or node.right:
+                if data[i] == '1':
+                    node = node.left
+                else:
+                    node = node.right
+                i += 1
+            decode += node.value
+        
+        return decode
 
 
     def _build_queue(self, data):
@@ -36,19 +83,36 @@ class Huffman():
         for c in data:
             queue_dict[c] += 1
         
-        # Create queue as sorted list of tuples with frequency first
-        self.queue = [(v,k) for k,v in queue_dict.items()]
+        # Create queue as sorted list of trees
+        self.queue = [Tree(value=k, frequency=v)
+                      for k,v in queue_dict.items()]
         self.queue.sort()
     
 
-    def _built_tree(self):
-        # TODO: Build Huffman Tree
-        return
+    def _build_tree(self):
+        # Build Huffman Tree
+        while len(self.queue) > 1:
+            # Combine top two items
+            tree1 = self.queue.pop(0)
+            tree2 = self.queue.pop(0)
+            tree1.combine(tree2)
+
+            # Add the resultant tree to queue and sort
+            self.queue.append(tree1)
+            self.queue.sort()
+
+        # When the queue is down to a single element, this is the tree
+        self.tree = self.queue[0]
     
 
-    def _get_codes(self):
-        # TODO: Extract codes from Huffman Tree
-        return
+    def _get_codes(self, node, code):
+        # Extract codes from Huffman Tree with pre-order traversal
+        if node:
+            if node.left is None and node.right is None:
+                self.codes[node.value] = code
+            else:
+                self._get_codes(node.left, code+'1')
+                self._get_codes(node.right, code+'0')
 
 
 if __name__ == "__main__":
@@ -61,24 +125,24 @@ if __name__ == "__main__":
 
     # Test for proper building of the queue
     assert huff.queue, 'Empty queue'
-    assert huff.queue[0] == (1,'b'), 'Incorrect first element'
+    assert huff.queue[0].root.frequency == 20, 'Incorrect first element frequency'
 
     # Test for proper building of the tree
     assert huff.tree, 'Empty tree'
-    assert huff.tree.root.value == 20, 'Incorrect frequency count on root node'
+    assert huff.tree.root.frequency == 20, 'Incorrect frequency count on root node'
 
     # Test for proper encoding
     assert huff.codes, 'Empty codes dict'
-    assert huff.codes[' '] == '10', 'Incorrect code for the single space'
+    assert huff.codes[' '] == '001', 'Incorrect code for the single space'
 
     # Evaluate quality of results
     print ("The size of the data is: {}".format(sys.getsizeof(a_great_sentence)))
     print ("The content of the data is: {}\n".format(a_great_sentence))
 
-    print ("The size of the encoded data is: {}\n".format(sys.getsizeof(int(encoded_data, base=2))))
+    print ("The size of the encoded data is: {}".format(sys.getsizeof(int(encoded_data, base=2))))
     print ("The content of the encoded data is: {}\n".format(encoded_data))
 
     decoded_data = huff.decode(encoded_data)
 
-    print ("The size of the decoded data is: {}\n".format(sys.getsizeof(decoded_data)))
+    print ("The size of the decoded data is: {}".format(sys.getsizeof(decoded_data)))
     print ("The content of the encoded data is: {}\n".format(decoded_data))
