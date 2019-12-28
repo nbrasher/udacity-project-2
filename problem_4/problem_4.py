@@ -26,7 +26,7 @@ class Group(object):
         return self.name
 
 
-def is_user_in_group(user, group):
+def is_user_in_group(user: str, group):
     """
     Return True if user is in the group, False otherwise.
 
@@ -34,6 +34,8 @@ def is_user_in_group(user, group):
       user(str): user name/id
       group(class:Group): group to check user membership against
     """
+    assert isinstance(user, str) and user, 'User input should be a non-empty string'
+    
     # Check if user in group
     if user in group.users:
         return True
@@ -57,6 +59,8 @@ if __name__ == '__main__':
     child.add_group(sub_child)
     parent.add_group(child)
 
-    assert is_user_in_group(sub_child_user, parent), 'Failing to detect user in child group'
-    assert not is_user_in_group('non-user', parent), 'Passing non-existent user'
-    print('All tests passed!')
+    print(is_user_in_group(sub_child_user, parent)) # Expect True
+    print(is_user_in_group('non-user', parent)) # Expect False
+    print('\n')
+
+    is_user_in_group(12345, parent) # Should raise an error about a non-string user

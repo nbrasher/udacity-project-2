@@ -99,10 +99,12 @@ if __name__ == '__main__':
     for i in element_2:
         linked_list_2.append(i)
 
-    print(union(linked_list_1,linked_list_2))
+    # Each of the print statements should show the expected output of the assert statement below
+    print(union(linked_list_1,linked_list_2)) 
     print(intersection(linked_list_1,linked_list_2))
     assert union(linked_list_1,linked_list_2) == [1, 2, 3, 4, 6, 9, 11, 21, 32, 35, 65]
     assert intersection(linked_list_1,linked_list_2) == [4, 6, 21]
+
 
     # Build test case 2
     linked_list_3 = LinkedList()
@@ -117,9 +119,16 @@ if __name__ == '__main__':
     for i in element_2:
         linked_list_4.append(i)
 
+    # Each of the print statements should show the expected output of the assert statement below
     print (union(linked_list_3,linked_list_4))
     print (intersection(linked_list_3,linked_list_4))
     assert union(linked_list_3,linked_list_4) == [1, 2, 3, 4, 6, 7, 8, 9, 11, 21, 23, 35, 65]
     assert intersection(linked_list_3, linked_list_4) == []
 
-    print('All tests passed!')
+
+    # Build an empty linked list test case, should return [] in both cases
+    linked_list_5 = LinkedList()
+    linked_list_6 = LinkedList()
+
+    print (union(linked_list_5,linked_list_6))
+    print (intersection(linked_list_5,linked_list_6))

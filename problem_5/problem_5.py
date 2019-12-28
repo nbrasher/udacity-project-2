@@ -9,6 +9,8 @@ import hashlib
 class Block:
 
     def __init__(self, timestamp, data, previous_hash):
+        assert isinstance(data, str), 'Block data should be a string'
+        
         self.timestamp = timestamp
         self.data = data
         self.previous_hash = previous_hash
@@ -70,6 +72,9 @@ if __name__ == '__main__':
     # Build test blockchain
     bc = BlockChain()
     bc.add_block('First block data')
+
+    print(bc) # Should print the first block with data "First block data"
+
     bc.add_block('Second block data')
 
     # Build test hash of first block data
@@ -78,6 +83,11 @@ if __name__ == '__main__':
     first_hash = sha.hexdigest()
 
     # Test that blockchain is being built properly
-    print(bc)
+    print(bc) # Should show the head with data "Second block data"
+
+    # Assert that previous_hash is the hash of "First block data"
     assert bc.head.previous_hash == first_hash, 'Incorrect previous hash value'
-    print('All tests passed!')
+
+    # Should raise an error if the blockchain tries to add a block with an non-string value
+    bc.add_block(1234)
+    
