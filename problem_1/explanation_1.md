@@ -1,0 +1,7 @@
+## Problem 1: LRU Cache  
+
+For this problem, I implemented a fixed-size hash map that also tracked access order. The hash map is structured as a simple array, with linked lists in each bucket to account for hash collisions. Because the example scenarios only used integers as keys, I used the simplest possible hash function (key % cache capacity) as a hash function. This structure ensures constant-time lookup storage. The hash map code was borrowed from Lesson 5: Maps and Hashing.  
+
+In order to also satisfy the requirement of a fixed-size cache, I tracked access (insertion or read) order for each key-value pair. To do this, I added `.before` and `.after` attributes to the LinkedListNode class. Each time a key-value pair is accessed it is moved to the head of this linked list by setting its `.before` attribute to `None` and its `.after` attribute to the previous list head, while also re-linking the list where it was removed. The `LRU_Cache` class also tracks the head and tail (called `most_recent` and `least_recent` for clarity) of this list. When ever the cache reaches capacity, and a new key-value pair is added, the node at `least_recent` is dropped in order to make room for the new key-value pair.
+
+In `problem_1.py` I've added a section with `if __name__ == '__main__'` that will run if you run the file in the command line. Each print statement is commented with the expected output. I've also added a few `assert` statements that were used in development to ensure correct behavior.

@@ -1,0 +1,7 @@
+## Problem 3: Huffman Encoding  
+
+For this problem, I created a custom class `Huffman` with `encode` and `decode` functions. The class also has `queue` `tree` and `codes` attributes which hold the priority queue for the Huffman algorithm, the final Huffman tree and the resultant codes for each character in the input string.
+
+The `tree` attribute of the `Huffman` class is a very simple implementation of a binary tree, with code borrowed from the lessons, and one addition. The tree has a `combine` method that allows for linking two binary trees in accordance with the Huffman algorithm. That is, `tree1.combine(tree2)` will create a new tree with a head node assigned a frequency as a sum of the frequency for `tree1` and `tree2` head nodes, and with the left child pointing to `tree1` and the right child pointing to `tree2`. The function `_get_codes` traverses this tree and builds a dict of the resulting codes in order to aid in the encoding process. The decoding process traverses the tree to get the decoded result.
+
+In `problem_3.py` I've added a section with `if __name__ == '__main__'` that will run if you run the file in the command line. Each print statement is commented with the expected output. I've also added a few `assert` statements that were used in development to ensure correct behavior.

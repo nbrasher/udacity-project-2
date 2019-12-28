@@ -43,6 +43,7 @@ class LRU_Cache:
 
 
     def set(self, key, value):
+        assert isinstance(key, int), 'Cache keys must be integers'
         bucket_index = self.get_bucket_index(key)
         
         new_node = LinkedListNode(key, value)
@@ -147,18 +148,24 @@ if __name__ == '__main__':
     assert our_cache.most_recent.value == 4, 'Incorrect tracking of most_recent for insertion'
 
     # Test behavior when returning existing keys
-    assert our_cache.get(1) == 1, 'Failed to return (1)'
+    print(our_cache.get(1)) # should print 1
     assert our_cache.most_recent.value == 1, 'Incorrect tracking of most_recent for access'
-    assert our_cache.get(2) == 2, 'Failed to return (2)'
+    print(our_cache.get(2)) # should print 2
     assert our_cache.least_recent.value == 3, 'Incorrect tracking of least_recent'
 
     # Test behavior for unset keys
-    assert our_cache.get(9) == -1, 'Failed to return -1 for missing value'
+    print(our_cache.get(9)) # should print -1
 
     # Fill cache so that LRU falls out
     our_cache.set(5, 5) 
     our_cache.set(6, 6)
 
     # Test expected beahvior for least recent value
-    assert our_cache.get(3) == -1, 'Failed to return -1 for removed value'
-    print('All tests passed')
+    print(our_cache.get(3)) # should print -1
+
+    # If initialized with no capacity, capacity should be equal to 5
+    our_cache = LRU_Cache()
+    print(our_cache.capacity) # should print 5
+
+    # If given a non-integer key, should raise an error
+    our_cache.set('a', 5)

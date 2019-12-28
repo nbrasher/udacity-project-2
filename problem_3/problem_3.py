@@ -46,7 +46,14 @@ class Huffman():
         self.codes = dict()
 
 
-    def encode(self, data):
+    def encode(self, data: str):
+        if not isinstance(data, str):
+            print('String required for input')
+            return
+        elif not data:
+            print('Input string is empty')
+            return
+        
         # Lower-case input string and build queue
         data=data.lower()
         self._build_queue(data)
@@ -59,7 +66,7 @@ class Huffman():
         return ''.join([self.codes[c] for c in data])
 
 
-    def decode(self, data):
+    def decode(self, data: str):
         # Huffman decoding
         decode = ''
         i=0
@@ -136,13 +143,22 @@ if __name__ == "__main__":
     assert huff.codes[' '] == '001', 'Incorrect code for the single space'
 
     # Evaluate quality of results
+    # Expect to see size of data is 69 plus the example string
     print ("The size of the data is: {}".format(sys.getsizeof(a_great_sentence)))
     print ("The content of the data is: {}\n".format(a_great_sentence))
 
+    # Expect to see size of data is less than original plus a binary string
     print ("The size of the encoded data is: {}".format(sys.getsizeof(int(encoded_data, base=2))))
     print ("The content of the encoded data is: {}\n".format(encoded_data))
 
     decoded_data = huff.decode(encoded_data)
 
+    # Expect to see the original size and string, in lower case form
     print ("The size of the decoded data is: {}".format(sys.getsizeof(decoded_data)))
     print ("The content of the encoded data is: {}\n".format(decoded_data))
+
+    # Test that encoding raises a warning if the input is not a string
+    huff.encode(12345)
+
+    # Test that encoding raises a warning if the input is an empty string
+    huff.encode('')

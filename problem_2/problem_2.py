@@ -5,7 +5,7 @@ Problem 2: File Recursion
 import os
 
 
-def find_files(suffix, path):
+def find_files(suffix: str, path):
     """
     Find all files beneath path with file name suffix.
 
@@ -21,6 +21,10 @@ def find_files(suffix, path):
     Returns:
        a list of paths
     """
+    
+    assert isinstance(suffix, str), 'Input suffix should be a string'
+    assert isinstance(path, str), 'Input suffix should be a string or filepath object'
+
     file_list = list()
 
     if os.path.isdir(path):
@@ -36,6 +40,9 @@ def find_files(suffix, path):
             elif os.path.isdir(os.path.join(path,f)):
                 file_list.extend(find_files(suffix, 
                                             os.path.join(path, f)))
+    else:
+        print('Invalid file path')
+        return
 
     return file_list
 
@@ -44,8 +51,16 @@ if __name__ == '__main__':
     file_list = find_files('.c', os.path.join(os.path.dirname(__file__), 
                                               'testdir'))
     
+    # The following should print the full file paths of t1.c as well as
+    # subdir1/a.c, subdir5/a.c and subdir3/subsubdir1/b.c
     if file_list:
         for f in file_list:
             print(f)
-    else:
-        print('No files found')
+    print('\n')
+
+    # Should print a statement that the folder does not exist
+    file_list = find_files('.c', 'not-a-directory')
+    print('\n')
+
+    # Should raise an error that the filepath is not a string or file object
+    file_list = find_files('.c', None)
