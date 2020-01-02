@@ -8,19 +8,25 @@ import hashlib
 
 class Block:
 
-    def __init__(self, timestamp, data, previous_hash):
-        assert isinstance(data, str), 'Block data should be a string'
+    def __init__(self, timestamp, data, previous=None):
         
         self.timestamp = timestamp
-        self.data = data
-        self.previous_hash = previous_hash
+        self.data = str(data)
+        self.previous = previous
+
+        # Get previous blocks hash
+        if self.previous:
+            self.previous_hash = self.previous.hash
+        else:
+            self.previous_hash = None
+
         self.hash = self.calc_hash()
 
 
     # Calculate SHA-256 hash of input data
     def calc_hash(self):
         sha = hashlib.sha256()
-        hash_str = self.data.encode('utf-8')
+        hash_str = hash_str = f'{self.timestamp}\n{self.data}\n{self.previous_hash}'.encode('utf-8')
         sha.update(hash_str)
 
         return sha.hexdigest()
@@ -46,14 +52,13 @@ class BlockChain:
     # Add block to blockchain
     def add_block(self, data):
         if self.head:
-            previous_hash = self.head.hash
+            block = Block(timestamp=time.time(), 
+                        data=data,
+                        previous=self.head)
         else:
-            previous_hash = None
+            block = Block(timestamp=time.time(), 
+                        data=data)
 
-        block = Block(timestamp=time.time(), 
-                      data=data,
-                      previous_hash=previous_hash)
-        
         self.head = block
         self.length += 1
     
@@ -72,22 +77,30 @@ if __name__ == '__main__':
     # Build test blockchain
     bc = BlockChain()
     bc.add_block('First block data')
+    
+    first_hash = bc.head.hash
 
     print(bc) # Should print the first block with data "First block data"
 
     bc.add_block('Second block data')
 
-    # Build test hash of first block data
-    sha = hashlib.sha256()
-    sha.update('First block data'.encode('utf-8'))
-    first_hash = sha.hexdigest()
-
     # Test that blockchain is being built properly
     print(bc) # Should show the head with data "Second block data"
 
-    # Assert that previous_hash is the hash of "First block data"
-    assert bc.head.previous_hash == first_hash, 'Incorrect previous hash value'
+    # Assert that previous_hash is the hash of the first block
+    assert bc.head.previous_hash == first_hash, 'Incorrect first hash value'
 
-    # Should raise an error if the blockchain tries to add a block with an non-string value
+    # Should handle non-string data, and show a head block with data '1234'
     bc.add_block(1234)
+    print(bc)
+
+    # Assert that can traverse to the first block and that hash is still correct
+    assert bc.head.previous.previous_hash == first_hash, 'Incorrect first hash value'
+
+
+    # Empty Blockchain
+    bc = BlockChain()
+
+    # Should print 'Blockchain with 0 blocks'
+    print(bc)
     
