@@ -17,12 +17,15 @@ class LinkedList:
         self.head = None
 
     def __str__(self):
-        cur_head = self.head
-        out_string = ""
-        while cur_head:
-            out_string += str(cur_head.value) + " -> "
-            cur_head = cur_head.next
-        return out_string
+        if self.head:
+            cur_head = self.head
+            out_string = ""
+            while cur_head:
+                out_string += str(cur_head.value) + " -> "
+                cur_head = cur_head.next
+            return out_string
+        else:
+            return 'Empty List'
 
     def append(self, value):
 
@@ -63,7 +66,13 @@ def union(llist_1, llist_2):
         node = node.next
     
     union.sort()
-    return union
+
+    # Convert to a linked list
+    ll_out = LinkedList()
+    for i in union:
+        ll_out.append(i)
+
+    return ll_out
 
 
 def intersection(llist_1, llist_2):
@@ -82,7 +91,13 @@ def intersection(llist_1, llist_2):
         node1 = node1.next
 
     intersection.sort()
-    return intersection
+
+    # Convert to a linked list
+    ll_out = LinkedList()
+    for i in intersection:
+        ll_out.append(i)
+
+    return ll_out
 
 
 if __name__ == '__main__':
@@ -100,10 +115,10 @@ if __name__ == '__main__':
         linked_list_2.append(i)
 
     # Each of the print statements should show the expected output of the assert statement below
+    # Should print [1, 2, 3, 4, 6, 9, 11, 21, 32, 35, 65]
     print(union(linked_list_1,linked_list_2)) 
+    # Should print [4, 6, 21]
     print(intersection(linked_list_1,linked_list_2))
-    assert union(linked_list_1,linked_list_2) == [1, 2, 3, 4, 6, 9, 11, 21, 32, 35, 65]
-    assert intersection(linked_list_1,linked_list_2) == [4, 6, 21]
 
 
     # Build test case 2
@@ -120,13 +135,13 @@ if __name__ == '__main__':
         linked_list_4.append(i)
 
     # Each of the print statements should show the expected output of the assert statement below
+    # Should print [1, 2, 3, 4, 6, 7, 8, 9, 11, 21, 23, 35, 65]]
     print (union(linked_list_3,linked_list_4))
+    # Should print "Empty List"
     print (intersection(linked_list_3,linked_list_4))
-    assert union(linked_list_3,linked_list_4) == [1, 2, 3, 4, 6, 7, 8, 9, 11, 21, 23, 35, 65]
-    assert intersection(linked_list_3, linked_list_4) == []
 
 
-    # Build an empty linked list test case, should return [] in both cases
+    # Build an empty linked list test case, should print "Empty List" in both cases
     linked_list_5 = LinkedList()
     linked_list_6 = LinkedList()
 
